@@ -1,0 +1,140 @@
+/* game board table */
+
+#board td {
+  width: 70px;
+  height: 70px;
+  border: solid 1px #666;
+}
+
+/* column-top is table row of clickable areas for each column */
+#column-top td {
+  border: dashed 1px rgb(163, 159, 159);
+}
+
+/* pieces are div within game table cells: draw as colored circles */
+
+.piece {
+  /* TODO: make into circles */
+  margin: 5px;
+  width: 80%;
+  height: 80%;
+  border-radius: 50%;
+}
+
+/* TODO: make pieces red/blue,  depending on player 1/2 piece */
+.p1 {
+  background-color: rgb(216, 92, 92);
+}
+
+.p2 {
+  background-color: rgb(87, 87, 206);
+}
+
+/* add-on styles */
+
+html {
+  box-sizing: border-box;
+}
+
+body {
+  width: 100vw;
+  height: 100vh;
+  text-align: center;
+  background-image: url("https://cdn.wallpapersafari.com/7/69/y68raO.jpg");
+  background-size: cover;
+  min-width: 1000px;
+  font-family: "DynaPuff", cursive;
+}
+
+h1 {
+  font-size: 4rem;
+  color: #ba8856;
+}
+
+#board {
+  margin: auto auto;
+}
+
+/* modal */
+/* The Modal (background) */
+#id01 {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  background-image: url("https://cdn.wallpapersafari.com/7/69/y68raO.jpg");
+  background-size: cover;
+  padding-top: 50px;
+  color: #ba8856;
+}
+
+/* Modal Content/Box */
+.modal-content {
+  background-color: rgba(254, 254, 254, 0.8);
+  margin: 10% auto 15% auto;
+  border: 1px solid #666;
+  width: 50%;
+  height: 40%;
+  min-width: 600px;
+}
+
+/* Add padding and center-align text to the container */
+.container {
+  padding: 16px;
+  text-align: center;
+  height: 100%;
+  margin: 40px 0;
+}
+
+.container h2 {
+  font-size: 2rem;
+}
+
+.container p {
+  font-size: 1.2rem;
+}
+
+/* Set a style for all buttons */
+button {
+  color: white;
+  padding: 14px 20px;
+  margin: 8px 0px;
+  border: none;
+  cursor: pointer;
+  opacity: 0.85;
+  font-family: "DynaPuff", cursive;
+  font-size: 1rem;
+}
+
+button:hover {
+  opacity: 1;
+}
+
+/* Float buttons and add an equal width */
+.resumebtn,
+.newgamebtn {
+  float: left;
+  width: 50%;
+}
+
+/* Add a color to the newgame button */
+.newgamebtn {
+  background-color: #ccc;
+  color: black;
+}
+
+/* Add a color to the resume button */
+.resumebtn {
+  background-color: #f44336;
+}
+
+/* Change styles for buttons on small screens */
+@media screen and (max-width: 600px) {
+  .resumebtn,
+  .newgamebtn {
+    width: 100%;
+  }
+}
