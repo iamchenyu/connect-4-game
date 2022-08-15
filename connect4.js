@@ -15,7 +15,7 @@ if (board == null) {
 }
 
 // check if there's any unfinished game
-if (board.length !== 0) {
+if (board.some((row) => row.some((val) => val != null))) {
   //show modal
   modal.style.display = "block";
   //add event listerners to two buttons
