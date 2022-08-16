@@ -249,11 +249,7 @@ function checkForWin() {
 
 // checkForTie
 function checkForTie() {
-  let allPieces = [];
-  for (let i = 0; i < board.length; i++) {
-    allPieces.push(...board[i]);
-  }
-  return allPieces.every((val) => val != null);
+  return board.every((row) => row.every((val) => val != null));
 }
 
 /** endGame: announce game end */
