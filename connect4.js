@@ -5,39 +5,61 @@
 
 const WIDTH = 7;
 const HEIGHT = 6;
-const modal = document.getElementById("id01");
+const htmlBoard = document.querySelector("#board");
+const modal = document.getElementById("modal");
 const resumeBtn = document.getElementById("resumebtn");
 const newGameBtn = document.getElementById("newgamebtn");
 let currPlayer = 1; // active player: 1 or 2
-let board = JSON.parse(localStorage.getItem("board"));
-if (board == null) {
-  board = [];
-}
+let board = JSON.parse(localStorage.getItem("board")) || [];
 
-// check if there's any unfinished game
-if (board.some((row) => row.some((val) => val != null))) {
-  //show modal
-  modal.style.display = "block";
-  //add event listerners to two buttons
-  resumeBtn.addEventListener("click", handleresume);
-  newGameBtn.addEventListener("click", handleNewGame);
-} else {
-  makeBoard();
-  makeHtmlBoard();
-}
+handleModalDisplay();
 
 // define main functions
+function handleModalDisplay() {
+  if (isUnfinished()) {
+    //show modal
+    modal.style.display = "block";
+    //add event listerners to two buttons
+    resumeBtn.addEventListener("click", handleresume);
+    newGameBtn.addEventListener("click", handleNewGame);
+    // check new game
+  } else {
+    handleNewGame();
+  }
+}
+
+function isUnfinished() {
+  return board.some((row) => row.some((val) => val != null));
+}
+
 function handleresume() {
   modal.style.display = "none";
   makeHtmlBoard();
   insertPieces();
+  checkCurrUser();
 }
 
 function handleNewGame() {
-  board = [];
+  resetBoard();
   modal.style.display = "none";
   makeBoard();
   makeHtmlBoard();
+}
+
+// check current player - we need to know who's turn when resuming the unfinished game
+function checkCurrUser() {
+  let playerArr = [];
+  for (let i = 0; i < board.length; i++) {
+    playerArr.push(...board[i]);
+  }
+  const player1 = playerArr.filter((val) => val === 1).length;
+  const player2 = playerArr.filter((val) => val === 2).length;
+  player1 > player2 ? (currPlayer = 2) : (currPlayer = 1);
+}
+
+function resetBoard() {
+  board = [];
+  localStorage.setItem("board", JSON.stringify(board));
 }
 
 // recreate the board for the unfinished game by inserting pieces
@@ -73,37 +95,34 @@ function makeBoard() {
 
 // make HTML table and row of column tops
 function makeHtmlBoard() {
-  // check current player - we need to know who's turn when resuming the unfinished game
-  let playerArr = [];
-  for (let i = 0; i < board.length; i++) {
-    playerArr.push(...board[i]);
-  }
-  const player1 = playerArr.filter((val) => val === 1).length;
-  const player2 = playerArr.filter((val) => val === 2).length;
-  player1 > player2 ? (currPlayer = 2) : (currPlayer = 1);
+  makeTableHeader();
+  makeTableBoard();
+}
 
-  // TODO: get "htmlBoard" variable from the item in HTML w/ID of "board"
-  const htmlBoard = document.querySelector("#board");
-
+function makeTableHeader() {
   // TODO: create the top of the table and add event listener to each cell
   const top = document.createElement("tr");
   top.setAttribute("id", "column-top");
+  // add click and hover events to the top row - event delegation to each cell in the top row
   top.addEventListener("click", handleClick);
+  top.addEventListener("mouseover", (e) =>
+    currPlayer === 1
+      ? e.target.classList.add("p1")
+      : e.target.classList.add("p2")
+  );
+  top.addEventListener("mouseout", (e) => (e.target.classList = ""));
 
-  // crreate cells for the top
+  // create cells for the top
   for (let x = 0; x < WIDTH; x++) {
     const headCell = document.createElement("td");
     headCell.setAttribute("id", x);
-    headCell.addEventListener("mouseover", (e) =>
-      currPlayer === 1
-        ? e.target.classList.add("p1")
-        : e.target.classList.add("p2")
-    );
-    headCell.addEventListener("mouseout", (e) => (e.target.classList = ""));
     top.append(headCell);
   }
-  htmlBoard.append(top);
 
+  htmlBoard.append(top);
+}
+
+function makeTableBoard() {
   // TODO: create the play board
   for (let y = 0; y < HEIGHT; y++) {
     const row = document.createElement("tr");
@@ -122,6 +141,7 @@ function makeHtmlBoard() {
       cell.addEventListener("click", handleClick);
       row.append(cell);
     }
+
     htmlBoard.append(row);
   }
 }
@@ -137,14 +157,8 @@ function handleClick(evt) {
     return;
   }
 
-  // place piece in board and add to HTML table
+  // place piece in HTML board and update the board
   placeInTable(y, x);
-
-  // TODO: add line to update in-memory board
-  board[y][x] = currPlayer;
-
-  // update local storage
-  localStorage.setItem("board", JSON.stringify(board));
 
   // check for win
   if (checkForWin()) {
@@ -159,11 +173,11 @@ function handleClick(evt) {
 
   // switch players
   // TODO: switch currPlayer 1 <-> 2
-  if (currPlayer === 1) {
-    currPlayer = 2;
-  } else {
-    currPlayer = 1;
-  }
+  switchPlayers();
+}
+
+function switchPlayers() {
+  currPlayer === 1 ? (currPlayer = 2) : (currPlayer = 1);
 }
 
 function placeInTable(y, x) {
@@ -173,6 +187,10 @@ function placeInTable(y, x) {
   currPlayer === 1 ? piece.classList.add("p1") : piece.classList.add("p2");
   const cell = document.getElementById(`${y}-${x}`);
   cell.append(piece);
+  // TODO: add line to update in-memory board
+  board[y][x] = currPlayer;
+  // update local storage
+  localStorage.setItem("board", JSON.stringify(board));
 }
 
 /** findSpotForCol: given column x, return top empty y (null if filled) */
@@ -254,8 +272,8 @@ function checkForTie() {
 
 /** endGame: announce game end */
 function endGame(msg) {
-  // clear local storage
-  localStorage.setItem("board", JSON.stringify([]));
+  // reset the game
+  resetBoard();
   // TODO: pop up alert message
   setTimeout(function () {
     alert(msg);
